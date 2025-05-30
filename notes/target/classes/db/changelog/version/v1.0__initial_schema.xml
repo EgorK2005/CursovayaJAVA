@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                      http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.9.xsd">
+
+
+    <changeSet id="1" author="dev">
+        <createTable tableName="users">
+            <column name="id" type="BIGSERIAL" autoIncrement="true">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="username" type="VARCHAR(255)">
+                <constraints unique="true"/>
+            </column>
+            <column name="password" type="VARCHAR(255)"/>
+        </createTable>
+    </changeSet>
+
+
+    <changeSet id="2" author="dev">
+        <createTable tableName="notes">
+            <column name="id" type="BIGSERIAL" autoIncrement="true">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="title" type="VARCHAR(255)"/>
+            <column name="content" type="TEXT"/>
+            <column name="created_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP"/>
+            <column name="updated_at" type="TIMESTAMP" defaultValueComputed="CURRENT_TIMESTAMP"/>
+            <column name="status" type="VARCHAR(20)" defaultValue="ACTIVE"/>
+            <column name="user_id" type="BIGINT"/>
+        </createTable>
+        <addForeignKeyConstraint
+                baseTableName="notes"
+                baseColumnNames="user_id"
+                referencedTableName="users"
+                referencedColumnNames="id"
+                constraintName="fk_notes_user"/>
+    </changeSet>
+
+
+    <changeSet id="3" author="dev">
+        <createTable tableName="tags">
+            <column name="id" type="BIGSERIAL" autoIncrement="true">
+                <constraints primaryKey="true"/>
+            </column>
+            <column name="name" type="VARCHAR(255)">
+                <constraints unique="true"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+
+    <changeSet id="4" author="dev">
+        <createTable tableName="user_roles">
+            <column name="user_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="roles" type="VARCHAR(255)"/>
+        </createTable>
+        <addForeignKeyConstraint
+                baseTableName="user_roles"
+                baseColumnNames="user_id"
+                referencedTableName="users"
+                referencedColumnNames="id"
+                constraintName="fk_user_roles_user"/>
+    </changeSet>
+
+    <changeSet id="5" author="dev">
+        <createTable tableName="note_tags">
+            <column name="note_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="tag_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+
+        <addPrimaryKey
+                tableName="note_tags"
+                columnNames="note_id, tag_id"
+                constraintName="pk_note_tags"/>
+
+
+        <addForeignKeyConstraint
+                baseTableName="note_tags"
+                baseColumnNames="note_id"
+                referencedTableName="notes"
+                referencedColumnNames="id"
+                constraintName="fk_note_tags_note"/>
+
+        <addForeignKeyConstraint
+                baseTableName="note_tags"
+                baseColumnNames="tag_id"
+                referencedTableName="tags"
+                referencedColumnNames="id"
+                constraintName="fk_note_tags_tag"/>
+    </changeSet>
+
+</databaseChangeLog>
