@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Welcome</title>
+    <link rel="stylesheet" href="/templates/css/style.css">
+</head>
+<body>
+<h1>Welcome to Notes App</h1>
+<div>
+    <a th:href="@{/login}">Login</a> |
+    <a th:href="@{/register}">Register</a> |
+    <a th:href="@{/notes}">My Notes</a>
+</div>
+</body>
+</html>
