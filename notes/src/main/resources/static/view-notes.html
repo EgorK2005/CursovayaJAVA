@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>My Notes</title>
+  <link rel="stylesheet" href="/css/styles.css">
+  <script src="/js/app.js" defer></script>
+</head>
+<body>
+<h1>My Notes</h1>
+<button onclick="location.href='/create-note.html'">Create New Note</button>
+<div id="notes-container"></div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', async () => {
+    const response = await fetch('/api/notes', {
+      method: 'GET',
+      credentials: 'include'
+    });
+
+    if (response.ok) {
+      const notes = await response.json();
+      const container = document.getElementById('notes-container');
+
+      notes.forEach(note => {
+        const noteElement = document.createElement('div');
+        noteElement.className = 'note';
+        noteElement.innerHTML = `
+                        <h3>${note.title}</h3>
+                        <p>${note.content}</p>
+                        <p>Created: ${new Date(note.createdAt).toLocaleString()}</p>
+                        <button onclick="editNote(${note.id})">Edit</button>
+                        <button onclick="deleteNote(${note.id})">Delete</button>
+                    `;
+        container.appendChild(noteElement);
+      });
+    }
+  });
+
+  async function deleteNote(noteId) {
+    if (confirm('Are you sure?')) {
+      const response = await fetch(`/api/notes/${noteId}`, {
+        method: 'DELETE',
+        credentials: 'include'
+      });
+
+      if (response.ok) {
+        location.reload();
+      }
+    }
+  }
+
+  function editNote(noteId) {
+    location.href = `/edit-note.html?id=${noteId}`;
+  }
+</script>
+</body>
+</html>
